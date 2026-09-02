@@ -1,6 +1,5 @@
-﻿using LearningPlatform.Models;
+using LearningPlatform.Models;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace LearningPlatform.Data
 {
@@ -8,8 +7,10 @@ namespace LearningPlatform.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-
         }
+
+        public DbSet<Subscription> Subscriptions { get; set; }
+
         public DbSet<AddTopic> AddTopic { get; set; }
     }
 }
