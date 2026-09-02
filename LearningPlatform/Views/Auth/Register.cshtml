@@ -1,0 +1,54 @@
+﻿@using LearningPlatform.Dto
+@model UserDto
+
+<div>
+    @ViewBag.ErrorMessage
+</div>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+
+            <div class="card shadow">
+                <div class="card-body">
+
+                    <form asp-action="CreateUser">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" asp-for="Name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email address</label>
+                            <input type="email" class="form-control" id="email" name="email" asp-for="Email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" asp-for="Username">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" asp-for="Password">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <select class="form-control" id="role" name="role" asp-for="Role">
+                                <option value="User">User</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </div>
+
+                        <input type="submit" class="btn btn-primary" value="Submit">
+                    </form>
+
+                    Already have an account?
+                    <a asp-controller="Auth" asp-action="Login">Login here.....</a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

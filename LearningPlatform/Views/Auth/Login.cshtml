@@ -1,0 +1,42 @@
+﻿@using LearningPlatform.Dto
+@model UserDto
+<div>
+    @ViewBag.SuccessMessage
+</div>
+<div>
+    @ViewBag.ErrorMessage
+</div>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+
+            <div class="card shadow">
+                <div class="card-body">
+
+                    <form asp-action="LoginUser">
+                        <div class="form-group">
+                            <label for="email">Email address</label>
+                            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email" asp-for="Email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" asp-for="Password">
+                        </div>
+
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="checkbox">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </form>
+
+                    @* New User? <a href="/Demo/Register">Register Here...</a> *@
+                    New User? <a asp-controller="Auth" asp-action="Register">Register here.....</a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

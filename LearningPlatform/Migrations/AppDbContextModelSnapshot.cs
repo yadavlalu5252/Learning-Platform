@@ -21,6 +21,39 @@ namespace LearningPlatform.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("LearningPlatform.Models.User", b =>
+            {
+                b.Property<int>("UserId")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+
+                b.Property<string>("Email")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
+
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
+
+                b.Property<string>("Password")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
+
+                b.Property<string>("Role")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
+
+                b.Property<string>("Username")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
+
+                b.HasKey("UserId");
+
+                b.ToTable("Users");
+            });
+
             modelBuilder.Entity("LearningPlatform.Models.Subscription", b =>
             {
                 b.Property<int>("sid")
