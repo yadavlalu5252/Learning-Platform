@@ -1,28 +1,34 @@
-<<<<<<< HEAD
-﻿using LearningPlatform.Models;
-=======
 using LearningPlatform.Models;
->>>>>>> origin/main
 using Microsoft.EntityFrameworkCore;
 
 namespace LearningPlatform.Data
 {
-<<<<<<< HEAD
-    public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
-    {
-        public DbSet<User> Users { get; set; }
-    }
-}
-=======
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+            : base(options)
         {
         }
 
-        public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<Subscription> Subscription { get; set; }
 
-        public DbSet<AddTopic> AddTopic { get; set; }
+        public DbSet<User> User { get; set; }
+
+        public DbSet<MasterCourse> MasterCourse { get; set; }
+
+        public DbSet<SubCourse> SubCourse { get; set; }
+
+        public DbSet<Cart> Cart { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Subscription>()
+                .HasOne(s => s.SubCourseData)
+                .WithMany()
+                .HasForeignKey(s => s.SubCourseId)
+                .OnDelete(DeleteBehavior.NoAction);
+        }
     }
 }
->>>>>>> origin/main

@@ -1,0 +1,609 @@
+﻿@model IEnumerable<LearningPlatform.Models.Subscription>
+
+@{
+    ViewData["Title"] = "Admin Subscriptions";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" />
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Subscription Management</h2>
+
+        <button class="btn btn-primary"
+                onclick="openAddModal()">
+            Add Subscription
+        </button>
+    </div>
+
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Message"]
+        </div>
+    }
+
+
+    <table id="subscriptionTable"
+           class="table table-bordered table-striped align-middle">
+
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Master Course</th>
+                <th>Sub Course</th>
+                <th>Thumbnail</th>
+                <th>Amount</th>
+                <th>Validity</th>
+                <th>Status</th>
+                <th>Created By</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>
+                        @item.stype
+                    </td>
+
+                    <td>
+                        @item.MasterCourseData?.MasterCourseName
+                    </td>
+
+                    <td>
+                        @item.SubCourseData?.SubCourseName
+                    </td>
+
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Thumbnail))
+                        {
+                            <img src="@item.Thumbnail"
+                                 width="70"
+                                 height="50"
+                                 style="object-fit:cover;" />
+                        }
+                    </td>
+
+                    <td>
+                        ₹ @item.amount
+                    </td>
+
+                    <td>
+                        @item.Validity days
+                    </td>
+
+                    <td>
+                        @item.status
+                    </td>
+
+                    <td>
+                        @item.CreatedBy
+                    </td>
+
+                    <td>
+                        @item.CreatedAt.ToString("dd-MM-yyyy HH:mm")
+                    </td>
+
+                    <td>
+
+                        <button class="btn btn-sm btn-warning"
+                                onclick="editSubscription(@item.sid)">
+                            Edit
+                        </button>
+
+                        <form asp-action="Delete"
+                              method="post"
+                              style="display:inline">
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@item.sid" />
+
+                            <button class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Delete this subscription?')">
+                                Delete
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+
+
+<div class="modal fade"
+     id="subscriptionModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="modalTitle">
+                    Add Subscription
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+
+            <form id="subscriptionForm"
+                  method="post"
+                  action="/Subscription/Add"
+                  enctype="multipart/form-data">
+
+                <div class="modal-body">
+
+                    <input type="hidden"
+                           name="sid"
+                           id="sid" />
+
+
+                
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Subscription Type
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               name="type"
+                               id="type"
+                               required />
+                    </div>
+
+
+                 
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Master Course
+                        </label>
+
+                        <select class="form-select"
+                                name="MasterCourseId"
+                                id="MasterCourseId"
+                                required>
+
+                            <option value="">
+                                Select Master Course
+                            </option>
+
+                            @foreach (var c in ViewBag.MasterCourses)
+                            {
+                                <option value="@c.Id">
+                                    @c.MasterCourseName
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                  
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Sub Courses
+                        </label>
+
+                        <div id="subCourseContainer"
+                             class="border rounded p-3">
+
+                            <span class="text-muted">
+                                Select a master course first.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+              
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Thumbnail
+                        </label>
+
+                        <input type="file"
+                               name="thumbnailFile"
+                               id="thumbnailFile"
+                               class="form-control"
+                               accept="image/*" />
+
+                        <small class="text-muted">
+                            Select subscription thumbnail.
+                        </small>
+
+                    </div>
+
+
+                
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Amount
+                        </label>
+
+                        <input type="number"
+                               class="form-control"
+                               name="amount"
+                               id="amount"
+                               min="0"
+                               step="0.01"
+                               required />
+
+                    </div>
+
+
+               
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Validity
+                        </label>
+
+                        <select class="form-select"
+                                name="Validity"
+                                id="Validity"
+                                required>
+
+                            <option value="">
+                                Select Validity
+                            </option>
+
+                            <option value="30">
+                                30 Days
+                            </option>
+
+                            <option value="90">
+                                90 Days
+                            </option>
+
+                            <option value="180">
+                                180 Days
+                            </option>
+
+                            <option value="365">
+                                365 Days
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                 
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Status
+                        </label>
+
+                        <select class="form-select"
+                                name="status"
+                                id="status">
+
+                            <option value="Active">
+                                Active
+                            </option>
+
+                            <option value="Inactive">
+                                Inactive
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+
+                    <button type="submit"
+                            id="saveButton"
+                            class="btn btn-primary">
+                        Save
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+
+
+<script>
+
+    let table;
+
+
+    $(function() {
+
+        table = new DataTable(
+            '#subscriptionTable',
+            {
+                pageLength: 10
+            }
+        );
+
+
+    
+        $('#MasterCourseId').on('change', function() {
+
+            loadSubCourses(
+                $(this).val(),
+                []
+            );
+
+        });
+
+    });
+
+
+
+
+    function openAddModal() {
+
+        $('#modalTitle').text(
+            'Add Subscription'
+        );
+
+        $('#subscriptionForm').attr(
+            'action',
+            '/Subscription/Add'
+        );
+
+        $('#saveButton').text(
+            'Save'
+        );
+
+
+        $('#sid').val('');
+
+        $('#stype').val('');
+
+        $('#MasterCourseId').val('');
+
+        $('#amount').val('');
+
+        $('#Validity').val('');
+
+        $('#status').val('Active');
+
+        $('#thumbnailFile').val('');
+
+
+        $('#subCourseContainer').html(
+            '<span class="text-muted">' +
+            'Select a master course first.' +
+            '</span>'
+        );
+
+
+        bootstrap.Modal
+            .getOrCreateInstance(
+                document.getElementById('subscriptionModal')
+            )
+            .show();
+
+    }
+
+
+    // FETCH SUB COURSES
+
+    function loadSubCourses(
+        masterCourseId,
+        selectedIds
+    ) {
+
+        if (!masterCourseId) {
+
+            $('#subCourseContainer').html(
+                '<span class="text-muted">' +
+                'Select a master course first.' +
+                '</span>'
+            );
+
+            return;
+        }
+
+
+        $.get(
+            '/Subscription/GetSubCourses',
+            {
+                masterCourseId: masterCourseId
+            },
+            function(data) {
+
+                $('#subCourseContainer').empty();
+
+
+                if (!data.length) {
+
+                    $('#subCourseContainer').html(
+                        '<span class="text-danger">' +
+                        'No active sub courses found.' +
+                        '</span>'
+                    );
+
+                    return;
+                }
+
+
+                data.forEach(function(item) {
+
+                    const checked =
+                        selectedIds.includes(item.id)
+                            ? 'checked'
+                            : '';
+
+
+                    $('#subCourseContainer').append(
+
+                        '<div class="form-check mb-2">' +
+
+                        '<input class="form-check-input" ' +
+
+                        'type="checkbox" ' +
+
+                        'name="selectedSubCourses" ' +
+
+                        'value="' + item.id + '" ' +
+
+                        'id="sub_' + item.id + '" ' +
+
+                        checked + '>' +
+
+                        '<label class="form-check-label" ' +
+
+                        'for="sub_' + item.id + '">' +
+
+                        item.name +
+
+                        '</label>' +
+
+                        '</div>'
+
+                    );
+
+                });
+
+            }
+
+        );
+
+    }
+
+
+
+
+    function editSubscription(id) {
+
+        $.get(
+            '/Subscription/Edit',
+            {
+                id: id
+            },
+            function(data) {
+
+                $('#modalTitle').text(
+                    'Edit Subscription'
+                );
+
+
+                $('#subscriptionForm').attr(
+                    'action',
+                    '/Subscription/Update'
+                );
+
+
+                $('#saveButton').text(
+                    'Update'
+                );
+
+
+                $('#sid').val(
+                    data.sid
+                );
+
+
+                $('#stype').val(
+                    data.stype
+                );
+
+
+                $('#MasterCourseId').val(
+                    data.masterCourseId
+                );
+
+
+                $('#amount').val(
+                    data.amount
+                );
+
+
+                $('#Validity').val(
+                    data.validity
+                );
+
+
+                $('#status').val(
+                    data.status
+                );
+
+                $('#thumbnailFile').val('');
+
+
+                loadSubCourses(
+                    data.masterCourseId,
+                    [data.subCourseId]
+                );
+
+
+                bootstrap.Modal
+                    .getOrCreateInstance(
+                        document.getElementById('subscriptionModal')
+                    )
+                    .show();
+
+            }
+
+        );
+
+    }
+
+</script>

@@ -1,0 +1,175 @@
+﻿@model LearningPlatform.Models.Cart
+
+@{
+    ViewData["Title"] = "Payment";
+}
+
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-header">
+
+                    <h4 class="mb-0">
+                        Payment
+                    </h4>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <h5>
+                        @Model.SubscriptionData?.stype
+                    </h5>
+
+
+                    <p>
+                        <strong>
+                            Master Course:
+                        </strong>
+
+                        @Model.MasterCourseData?.MasterCourseName
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Sub Course:
+                        </strong>
+
+                        @Model.SubCourseData?.SubCourseName
+                    </p>
+
+
+                    <p>
+                        <strong>
+                            Amount:
+                        </strong>
+
+                        ₹ @Model.Amount
+                    </p>
+
+
+                    <button type="button"
+                            class="btn btn-primary w-100"
+                            onclick="startPayment()">
+
+                        Pay ₹ @Model.Amount
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+<script>
+
+    function startPayment() {
+
+        var options = {
+
+            "key": "@ViewBag.KeyId",
+
+            "amount": @ViewBag.Amount,
+
+            "currency": "INR",
+
+            "name": "Masstech Business Solutions Pvt.Ltd",
+
+            "description": "Subscription Payment",
+
+            "order_id": "@ViewBag.OrderId",
+
+
+            "handler": function(response) {
+
+                var paymentId =
+                    response.razorpay_payment_id;
+
+
+                $.ajax({
+
+                    url: '/Cart/PaymentSuccess',
+
+                    type: 'POST',
+
+                    data: {
+
+                        cartId: @ViewBag.CartId,
+
+                        userId: @ViewBag.UserId,
+
+                        paymentId: paymentId
+
+                    },
+
+                    success: function() {
+
+                        alert(
+                            'Payment successful. Payment ID: '
+                            + paymentId
+                        );
+
+                        window.location.href =
+                            '/Cart/Index?userId=1;
+
+                    },
+
+                    error: function() {
+
+                        alert(
+                            'Payment was successful, but something went wrong while updating the cart.'
+                        );
+
+                    }
+
+                });
+
+            },
+
+
+            "prefill": {
+
+                "name": "",
+
+                "email": "",
+
+                "contact": ""
+
+            },
+
+
+            "theme": {
+
+                "color": "#F37254"
+
+            }
+
+        };
+
+
+        var rzp1 =
+            new Razorpay(options);
+
+
+        rzp1.open();
+
+    }
+
+</script>

@@ -1,0 +1,171 @@
+﻿@model IEnumerable<LearningPlatform.Models.Cart>
+
+@{
+    ViewData["Title"] = "My Cart";
+    int userId = 1; // Replace with actual user ID retrieval logic
+}
+
+
+<div class="container py-4">
+
+    <h2 class="mb-4">
+        My Cart
+    </h2>
+
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Message"]
+        </div>
+    }
+
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            Your cart is empty.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4 mb-4">
+
+                    <div class="card h-100 shadow-sm">
+
+                        @if (!string.IsNullOrEmpty(
+                            item.SubscriptionData?.Thumbnail))
+                        {
+                            <img src="@item.SubscriptionData.Thumbnail"
+                                 class="card-img-top"
+                                 style="height:200px; object-fit:cover;" />
+                        }
+
+                        <div class="card-body">
+
+                            <h5 class="card-title">
+
+                                @item.MasterCourseData?.MasterCourseName
+
+                            </h5>
+
+
+                            <p class="mb-2">
+
+                                <strong>
+                                    Sub Course:
+                                </strong>
+
+                                @item.SubCourseData?.SubCourseName
+
+                            </p>
+
+
+                            <p class="mb-2">
+
+                                <strong>
+                                    Amount:
+                                </strong>
+
+                                ₹ @item.Amount
+
+                            </p>
+
+
+                            @if (item.SubscriptionData != null)
+                            {
+                                <p class="mb-2">
+
+                                    <strong>
+                                        Subscription:
+                                    </strong>
+
+                                    @item.SubscriptionData.stype
+
+                                </p>
+
+                                <p>
+
+                                    <strong>
+                                        Validity:
+                                    </strong>
+
+                                    @item.SubscriptionData.Validity days
+
+                                </p>
+                            }
+
+                        </div>
+
+
+                        <div class="card-footer">
+
+                            <div class="d-flex gap-2">
+
+                                <form asp-controller="Cart" asp-action="Add" method="post">
+                                    <input type="hidden" name="userId" value="1" />
+                                    <input type="hidden" name="subscriptionId" value="1" />
+
+                                    <button type="submit">Add to Cart</button>
+                                </form>
+
+                                <form asp-controller="Cart"
+                                      asp-action="Payment"
+                                      method="post"
+                                      class="flex-grow-1">
+
+                                    <input type="hidden"
+                                           name="cartId"
+                                           value="@item.CartId" />
+
+                                    <input type="hidden"
+                                           name="userId"
+                                           value="@userId" />
+
+                                    <button type="submit"
+                                            class="btn btn-primary w-100">
+                                        Pay Now
+                                    </button>
+
+                                </form>
+
+
+                                
+
+                                <form asp-controller="Cart"
+                                      asp-action="Delete"
+                                      method="post">
+
+                                    <input type="hidden"
+                                           name="cartId"
+                                           value="@item.CartId" />
+
+                                    <input type="hidden"
+                                           name="userId"
+                                           value="@userId" />
+
+                                    <button type="submit"
+                                            class="btn btn-danger"
+                                            onclick="return confirm('Remove this item from cart?')">
+                                        Remove
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+
+</div>
