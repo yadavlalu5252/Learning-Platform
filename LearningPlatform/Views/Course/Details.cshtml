@@ -1,0 +1,92 @@
+﻿@model LearningPlatform.Models.MasterCourse
+
+@{
+    ViewData["Title"] = "Course Details";
+}
+
+<div class="container mt-4">
+
+    <!-- MASTER COURSE -->
+
+    <div class="card shadow mb-4">
+
+        <img src="@Model.Thumbnail"
+             class="card-img-top"
+             style="height:250px; object-fit:cover;"
+             alt="@Model.MasterCourseName">
+
+        <div class="card-body">
+
+            <h2>@Model.MasterCourseName</h2>
+
+            <span class="badge bg-primary">
+                @Model.Status
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUB COURSES -->
+
+    <h4 class="mb-3">
+        Sub Courses
+    </h4>
+
+    <div class="row">
+
+        @foreach (var item in ViewBag.SubCourses)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+
+                <div class="card shadow h-100">
+
+                    <!-- THUMBNAIL -->
+
+                    <img src="@item.Thumbnail"
+                         class="card-img-top"
+                         style="height:200px; object-fit:cover;"
+                         alt="@item.SubCourseName">
+
+                    <!-- INFORMATION -->
+
+                    <div class="card-body d-flex flex-column">
+
+                        <h5 class="card-title">
+                            @item.SubCourseName
+                        </h5>
+
+                        <span class="badge bg-success align-self-start mb-3">
+                            @item.Status
+                        </span>
+
+                        <p class="mb-3">
+                            <strong>Amount:</strong>
+                            ₹@item.Amount
+                        </p>
+
+                        <!-- OPEN BUTTON -->
+                        @{
+                            var firstTopic = ((List<LearningPlatform.Models.AddTopic>)ViewBag.FirstTopics)
+                                .FirstOrDefault(x => x.SubCourseId == item.Id);
+                        }
+
+                        <a asp-controller="MyCourses"
+                           asp-action="Learn"
+                           asp-route-id="@item.Id"
+                           asp-route-topicId="@firstTopic?.Id"
+                           class="btn btn-success w-100 mt-auto">
+                            ▶ Play
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>

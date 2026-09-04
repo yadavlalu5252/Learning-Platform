@@ -4,6 +4,7 @@ using LearningPlatform.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LearningPlatform.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260903152731_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,46 +223,6 @@ namespace LearningPlatform.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AssignmentSubmissions");
-                });
-
-            modelBuilder.Entity("LearningPlatform.Models.Cart", b =>
-                {
-                    b.Property<int>("CartId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
-
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("MasterCourseId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SubCourseId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SubscriptionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CartId");
-
-                    b.HasIndex("MasterCourseId");
-
-                    b.HasIndex("SubCourseId");
-
-                    b.HasIndex("SubscriptionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("LearningPlatform.Models.Certificate", b =>
@@ -614,38 +577,6 @@ namespace LearningPlatform.Migrations
                         .IsRequired();
 
                     b.Navigation("MaterialData");
-
-                    b.Navigation("UserData");
-                });
-
-            modelBuilder.Entity("LearningPlatform.Models.Cart", b =>
-                {
-                    b.HasOne("LearningPlatform.Models.MasterCourse", "MasterCourseData")
-                        .WithMany()
-                        .HasForeignKey("MasterCourseId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("LearningPlatform.Models.SubCourse", "SubCourseData")
-                        .WithMany()
-                        .HasForeignKey("SubCourseId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("LearningPlatform.Models.Subscription", "SubscriptionData")
-                        .WithMany()
-                        .HasForeignKey("SubscriptionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("LearningPlatform.Models.User", "UserData")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("MasterCourseData");
-
-                    b.Navigation("SubCourseData");
-
-                    b.Navigation("SubscriptionData");
 
                     b.Navigation("UserData");
                 });

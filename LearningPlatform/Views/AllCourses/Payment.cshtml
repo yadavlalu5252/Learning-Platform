@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "Payment";
+}
+
+<div class="container mt-5">
+
+    <div class="card shadow mx-auto"
+         style="max-width:500px;">
+
+        <div class="card-body text-center">
+
+            <h2 class="mb-4">
+                Complete Payment
+            </h2>
+
+            <p class="mb-4">
+                You are paying:
+                <strong>
+                    ₹@((decimal)ViewBag.Amount / 100)
+                </strong>
+            </p>
+
+            <button id="payButton"
+                    class="btn btn-success btn-lg">
+                Pay Now
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+
+    document.getElementById("payButton").onclick = function() {
+        var options = {
+
+            "key": "@ViewBag.KeyId",
+
+            "amount": @ViewBag.Amount,
+
+            "currency": "INR",
+
+            "name": "LearningPlatform",
+
+            "description": "Course Purchase",
+
+            "order_id": "@ViewBag.OrderId",
+
+            "handler": function(response) {
+                var form = document.createElement("form");
+
+                form.method = "POST";
+                form.action = "/AllCourses/PaymentSuccess";
+
+                var paymentId = document.createElement("input");
+                paymentId.type = "hidden";
+                paymentId.name = "razorpay_payment_id";
+                paymentId.value = response.razorpay_payment_id;
+
+                var orderId = document.createElement("input");
+                orderId.type = "hidden";
+                orderId.name = "razorpay_order_id";
+                orderId.value = response.razorpay_order_id;
+
+                var signature = document.createElement("input");
+                signature.type = "hidden";
+                signature.name = "razorpay_signature";
+                signature.value = response.razorpay_signature;
+
+                form.appendChild(paymentId);
+                form.appendChild(orderId);
+                form.appendChild(signature);
+
+                document.body.appendChild(form);
+
+                form.submit();
+            },
+
+            "theme":
+            {
+                "color": "#0d6efd"
+            }
+
+        };
+
+        var razorpay = new Razorpay(options);
+
+        razorpay.open();
+    };
+
+</script>

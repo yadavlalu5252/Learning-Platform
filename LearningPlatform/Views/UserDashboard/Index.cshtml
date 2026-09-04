@@ -1,0 +1,269 @@
+﻿@model List<LearningPlatform.Models.Purchase>
+
+@{
+    ViewData["Title"] = "Dashboard";
+
+    var user = ViewBag.User as LearningPlatform.Models.User;
+}
+
+<div class="container mt-5">
+
+    <div class="mb-4">
+        <h2>Welcome, @user.Name</h2>
+        <p class="text-muted">
+            Welcome to Learning Platform
+        </p>
+    </div>
+
+    <div class="row">
+
+        <!-- All Courses -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+
+                    <h4>📚</h4>
+
+                    <h5>All Courses</h5>
+
+                    <p class="text-muted">
+                        Explore all available courses.
+                    </p>
+
+                    <a asp-controller="AllCourses"
+                       asp-action="Index"
+                       class="btn btn-primary">
+                        View Courses
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- My Courses -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+
+                    <h4>🎓</h4>
+
+                    <h5>My Courses</h5>
+
+                    <p class="text-muted">
+                        View your purchased courses.
+                    </p>
+
+                    <a asp-controller="MyCourses"
+                       asp-action="Index"
+                       class="btn btn-success">
+                        My Courses
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Subscription -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+
+                    <h4>💳</h4>
+
+                    <h5>Subscription</h5>
+
+                    <p class="text-muted">
+                        View available subscriptions.
+                    </p>
+
+                    <a asp-controller="AllCourses"
+                       asp-action="Index"
+                       class="btn btn-warning">
+                        Subscription
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile -->
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+
+                    <h4>👤</h4>
+
+                    <h5>Profile</h5>
+
+                    <p class="text-muted">
+                        View your profile details.
+                    </p>
+
+                    <button type="button"
+                            class="btn btn-dark"
+                            data-bs-toggle="modal"
+                            data-bs-target="#profileModal">
+                        View Profile
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Profile Modal -->
+<div class="modal fade"
+     id="profileModal"
+     tabindex="-1"
+     aria-labelledby="profileModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="profileModalLabel">
+                    My Profile
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="mb-3">
+                    <strong>User ID</strong>
+                    <p class="text-muted mb-0">
+                        @user.UserId
+                    </p>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Name</strong>
+                    <p class="text-muted mb-0">
+                        @user.Name
+                    </p>
+                </div>
+
+                <div class="mb-3">
+                    <strong>Email</strong>
+                    <p class="text-muted mb-0">
+                        @user.Email
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <form asp-controller="Auth"
+                      asp-action="Logout"
+                      method="post">
+
+                    <button type="submit"
+                            class="btn btn-danger">
+                        Logout
+                    </button>
+
+                </form>
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- Course Progress -->
+<div class="card shadow-sm mt-3 mb-4">
+
+    <div class="card-body">
+
+        <h4 class="mb-4">My Course Progress</h4>
+
+        @if (Model.Count == 0)
+        {
+            <div class="alert alert-info mb-0">
+                You have not purchased any courses yet.
+            </div>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                string courseName = "";
+
+                if (item.MasterCourseData != null)
+                {
+                    courseName = item.MasterCourseData.MasterCourseName;
+                }
+                else if (item.SubCourseData != null)
+                {
+                    courseName = item.SubCourseData.SubCourseName;
+                }
+                else if (item.SubscriptionData != null)
+                {
+                    courseName = item.SubscriptionData.stype;
+                }
+
+                int courseProgress = 0;
+
+                if (ViewBag.Progress != null)
+                {
+                    var progressData =
+                        ViewBag.Progress as Dictionary<int, int>;
+
+                    if (progressData != null &&
+                        progressData.ContainsKey(item.PurchaseId))
+                    {
+                        courseProgress =
+                            progressData[item.PurchaseId];
+                    }
+                }
+
+                <div class="mb-4">
+
+                    <div class="d-flex justify-content-between mb-1">
+                        <strong>@courseName</strong>
+                        <span>@courseProgress%</span>
+                    </div>
+
+                    <div class="progress"
+                         style="height: 18px;">
+
+                        <div class="progress-bar"
+                             role="progressbar"
+                             style="width:@courseProgress%;"
+                             aria-valuenow="@courseProgress"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                            @courseProgress%
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+        }
+
+    </div>
+
+</div>

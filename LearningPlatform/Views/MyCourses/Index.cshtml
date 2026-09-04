@@ -1,0 +1,300 @@
+﻿@model List<LearningPlatform.Models.Purchase>
+
+@{
+    ViewData["Title"] = "My Courses";
+}
+
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-info">
+            You have not purchased any courses yet.
+        </div>
+    }
+    else
+    {
+        <!-- FILTERS -->
+
+        <div class="mb-4">
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input course-filter"
+                       type="checkbox"
+                       id="masterFilter"
+                       value="master">
+
+                <label class="form-check-label" for="masterFilter">
+                    Master Course
+                </label>
+            </div>
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input course-filter"
+                       type="checkbox"
+                       id="subFilter"
+                       value="sub">
+
+                <label class="form-check-label" for="subFilter">
+                    Sub Course
+                </label>
+            </div>
+
+            <div class="form-check form-check-inline">
+                <input class="form-check-input course-filter"
+                       type="checkbox"
+                       id="subscriptionFilter"
+                       value="subscription">
+
+                <label class="form-check-label" for="subscriptionFilter">
+                    Subscription
+                </label>
+            </div>
+
+        </div>
+
+
+        <!-- COURSES -->
+
+        <div class="row">
+
+            @foreach (var item in Model)
+            {
+                @if (item.MasterCourseData != null)
+                {
+                    <div class="col-lg-4 col-md-6 mb-4 course-card"
+                         data-type="master">
+
+                        <div class="card shadow h-100">
+
+                            <img src="@item.MasterCourseData.Thumbnail"
+                                 class="card-img-top"
+                                 style="height:200px; object-fit:cover;"
+                                 alt="@item.MasterCourseData.MasterCourseName">
+
+                            <div class="card-body d-flex flex-column">
+
+                                <h5 class="card-title">
+                                    @item.MasterCourseData.MasterCourseName
+                                </h5>
+
+                                <span class="badge bg-primary align-self-start mb-3">
+                                    Master Course
+                                </span>
+
+                                <p class="mb-2">
+                                    <strong>Amount Paid:</strong>
+                                    ₹@item.Amount
+                                </p>
+
+                                <p class="mb-3">
+                                    <strong>Purchased:</strong>
+                                    @item.PurchaseDate.ToString("dd-MM-yyyy")
+                                </p>
+                                <p class="mb-2">
+                                    <strong>Days Left:</strong>
+                                    @ViewBag.DaysLeft[item.PurchaseId]
+                                </p>
+
+                                <p class="mb-3">
+                                    <strong>Valid Until:</strong>
+                                    @ViewBag.ExpiryDates[item.PurchaseId].ToString("dd-MM-yyyy")
+                                </p>
+                                @if (ViewBag.DaysLeft[item.PurchaseId] == 0)
+                                {
+                                    <span class="badge bg-danger mb-3">
+                                        🔒 Course Expired
+                                    </span>
+                                }
+                                <a asp-controller="Course"
+                                   asp-action="Details"
+                                   asp-route-id="@item.MasterCourseId"
+                                   class="btn btn-primary w-100 mt-auto">
+                                    ▶ Play
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+
+                @if (item.SubCourseData != null)
+                {
+                    <div class="col-lg-4 col-md-6 mb-4 course-card"
+                         data-type="sub">
+
+                        <div class="card shadow h-100">
+
+                            <img src="@item.SubCourseData.Thumbnail"
+                                 class="card-img-top"
+                                 style="height:200px; object-fit:cover;"
+                                 alt="@item.SubCourseData.SubCourseName">
+
+                            <div class="card-body d-flex flex-column">
+
+                                <h5 class="card-title">
+                                    @item.SubCourseData.SubCourseName
+                                </h5>
+
+                                <span class="badge bg-success align-self-start mb-3">
+                                    Sub Course
+                                </span>
+
+                                <p class="mb-2">
+                                    <strong>Amount Paid:</strong>
+                                    ₹@item.Amount
+                                </p>
+
+                                <p class="mb-3">
+                                    <strong>Purchased:</strong>
+                                    @item.PurchaseDate.ToString("dd-MM-yyyy")
+                                </p>
+                                <p class="mb-2">
+                                    <strong>Days Left:</strong>
+                                    @ViewBag.DaysLeft[item.PurchaseId]
+                                </p>
+
+                                <p class="mb-3">
+                                    <strong>Valid Until:</strong>
+                                    @ViewBag.ExpiryDates[item.PurchaseId].ToString("dd-MM-yyyy")
+                                </p>
+                                <a asp-controller="MyCourses"
+                                   asp-action="Learn"
+                                   asp-route-id="@item.SubCourseId"
+                                   class="btn btn-success w-100">
+                                    ▶ Play
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+
+
+                @if (item.SubscriptionData != null)
+                {
+                    <div class="col-lg-4 col-md-6 mb-4 course-card"
+                         data-type="subscription">
+
+                        <div class="card shadow h-100">
+
+                            <img src="@item.SubscriptionData.Thumbnail"
+                                 class="card-img-top"
+                                 style="height:200px; object-fit:cover;"
+                                 alt="@item.SubscriptionData.stype">
+
+                            <div class="card-body d-flex flex-column">
+
+                                <h5 class="card-title">
+                                    @item.SubscriptionData.stype
+                                </h5>
+
+                                <span class="badge bg-warning text-dark align-self-start mb-3">
+                                    Subscription
+                                </span>
+
+                                <p class="mb-2">
+                                    <strong>Amount Paid:</strong>
+                                    ₹@item.Amount
+                                </p>
+
+                                <p class="mb-3">
+                                    <strong>Purchased:</strong>
+                                    @item.PurchaseDate.ToString("dd-MM-yyyy")
+                                </p>
+                                <p class="mb-2">
+                                    <strong>Days Left:</strong>
+                                    @ViewBag.DaysLeft[item.PurchaseId]
+                                </p>
+
+                                <p class="mb-3">
+                                    <strong>Valid Until:</strong>
+                                    @ViewBag.ExpiryDates[item.PurchaseId].ToString("dd-MM-yyyy")
+                                </p>
+                                <a asp-controller="MyCourses"
+                                   asp-action="Learn"
+                                   asp-route-id="@item.SubscriptionData.SubCourseId"
+                                   class="btn btn-warning w-100 mt-auto">
+                                    ▶ Open
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+            }
+
+        </div>
+    }
+
+</div>
+
+
+<script>
+
+    document.querySelectorAll(".course-filter").forEach(function(checkbox) {
+
+        checkbox.addEventListener("change", function() {
+
+            var selectedType = this.value;
+
+            /*
+             * Only one checkbox can be selected
+             */
+
+            if (this.checked) {
+                document.querySelectorAll(".course-filter").forEach(function(item) {
+
+                    if (item != checkbox) {
+                        item.checked = false;
+                    }
+
+                });
+
+                /*
+                 * Show selected type only
+                 */
+
+                document.querySelectorAll(".course-card").forEach(function(card) {
+
+                    if (card.getAttribute("data-type") == selectedType) {
+                        card.style.display = "block";
+                    }
+                    else {
+                        card.style.display = "none";
+                    }
+
+                });
+
+            }
+            else {
+                /*
+                 * If checkbox is unchecked,
+                 * show all courses
+                 */
+
+                document.querySelectorAll(".course-card").forEach(function(card) {
+
+                    card.style.display = "block";
+
+                });
+
+            }
+
+        });
+
+    });
+
+</script>
